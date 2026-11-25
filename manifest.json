@@ -1,0 +1,16 @@
+{
+  "name": "مشغلي الحركة TAGADDOD - BY.ALI RAGAB",
+  "short_name": "مشغلي الحركة",
+  "description": "إدارة حركة TAGADDOD والرحلات وبدل السفر وتحاليل العملاء",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#e5e7eb",
+  "theme_color": "#6b102e",
+  "icons": [
+    { "src": "icon.png", "sizes": "768x768", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

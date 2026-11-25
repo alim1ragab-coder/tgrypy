@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6b102e">
+  <meta name="description" content="إدارة حركة TAGADDOD والرحلات وبدل السفر وأيام العمل الإضافية وتحليل عينات الزيت">
+  <title>مشغلي الحركة | TAGADDOD</title>
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css?v=settlement-v9">
+</head>
+<body>
+  <div id="appSplash" class="app-splash" role="dialog" aria-label="شاشة بدء التطبيق">
+    <div class="app-splash-card">
+      <img src="icon.png" alt="مشغلي الحركة TAGADDOD">
+      <button id="skipSplashBtn" type="button">تخطي</button>
+    </div>
+  </div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">T</div>
+      <div><h1>مشغلي الحركة</h1><small>TAGADDOD · BY.ALI RAGAB</small></div>
+    </div>
+    <div class="header-actions">
+      <span id="connectionStatusBadge" class="status-badge status-offline" aria-label="جارٍ التحقق من الاتصال">
+        <svg class="wifi-symbol" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M2 8.82a15.91 15.91 0 0 1 20 0M5 12.55a11 11 0 0 1 14 0M8.94 16.11a6 6 0 0 1 6.12 0M12 20h.01"></path>
+        </svg>
+        <svg class="wifi-offline-mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6 18 18M18 6 6 18"></path>
+        </svg>
+        <span class="connection-status-label">جارٍ التحقق...</span>
+      </span>
+      <img id="headerAvatar" class="header-avatar hidden" alt="الصورة الشخصية">
+      <span id="userBadge" class="user-badge hidden">
+        <span class="user-badge-icon" aria-hidden="true"></span>
+        <span class="user-badge-name"></span>
+        <span class="user-badge-details"></span>
+      </span>
+      <button id="checkUpdateBtn" class="secondary" type="button" aria-label="فحص إصدار التطبيق" title="فحص إصدار التطبيق">
+        <span class="header-button-icon" aria-hidden="true">↻</span>
+        <span class="header-button-label">الإصدار</span>
+      </button>
+      <button id="openLoginFromSamplesBtn" class="secondary" type="button">تسجيل الدخول</button>
+      <button id="openChangePassBtn" class="secondary hidden" type="button">حسابي</button>
+      <button id="logoutBtn" class="danger hidden" type="button">خروج</button>
+    </div>
+  </header>
+
+  <div id="actionProgress" class="action-progress hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <main>
+    <section id="authSection" class="panel auth-panel hidden">
+      <div class="panel-head"><h2 id="authTitle">تسجيل الدخول</h2><button id="backToSamplesBtn" class="secondary" type="button">رجوع للتحليل</button></div>
+      <p id="authHint" class="muted">أدخل رقم التليفون والرقم السري المسجل.</p>
+      <p id="loginProgressMessage" class="login-progress-message hidden" role="status" aria-live="polite">جاري تسجيل الدخول... من فضلك انتظر ولا تغلق الصفحة.</p>
+      <form id="loginForm" class="form-grid one-column">
+        <label>رقم التليفون
+          <input id="loginPhoneInput" type="tel" inputmode="numeric" autocomplete="username" placeholder="01xxxxxxxxx" required>
+        </label>
+        <div id="existingPasswordBox">
+          <label>الرقم السري
+            <input id="loginPasswordInput" type="password" autocomplete="current-password" placeholder="كلمة السر">
+          </label>
+        </div>
+        <div id="firstTimeSetupBox" class="hidden">
+          <label>رقم سري جديد
+            <input id="setupPasswordInput" type="password" minlength="4" inputmode="numeric" pattern="[0-9]*" title="أرقام فقط، 4 أرقام على الأقل" autocomplete="new-password">
+          </label>
+          <label>تأكيد الرقم السري
+            <input id="confirmPasswordInput" type="password" minlength="4" inputmode="numeric" pattern="[0-9]*" title="أرقام فقط، 4 أرقام على الأقل" autocomplete="new-password">
+          </label>
+        </div>
+        <div class="actions-row">
+          <button id="phoneAuthBtn" class="primary" type="submit">تسجيل الدخول</button>
+          <button id="cancelLoginBtn" class="secondary" type="button">إلغاء</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="profileModalSection" class="panel hidden">
+      <div class="panel-head"><h2>تعديل بيانات الحساب</h2><button id="closeProfileModalBtn" class="secondary" type="button">إغلاق</button></div>
+      <p class="muted">اترك الحقول التي لا تريد تغييرها فارغة. تغيير كلمة السر يتطلب كلمة السر الحالية.</p>
+      <form id="profileForm" class="form-grid">
+        <label>رقم تليفون جديد<input id="updatePhoneInput" type="tel" inputmode="numeric" placeholder="اتركه فارغًا دون تغيير"></label>
+        <label>كلمة السر الحالية<input id="currentPassInput" type="password" autocomplete="current-password"></label>
+        <label>كلمة السر الجديدة<input id="updatedPassInput" type="password" minlength="4" autocomplete="new-password"></label>
+        <label>الصورة الشخصية<input id="updateAvatarInput" type="file" accept="image/*"></label>
+        <button id="saveProfileChangesBtn" type="button" class="primary">حفظ التعديلات</button>
+      </form>
+    </section>
+
+    <section id="appSection">
+      <section id="guestLoginPrompt" class="panel guest-login-prompt hidden">
+        <div>
+          <h2>أهلًا بك في مشغلي الحركة</h2>
+          <p class="muted">سجّل دخولك للوصول إلى الرحلات وسجل الأيام الإضافية.</p>
+        </div>
+        <button id="guestLoginBtn" class="primary" type="button">تسجيل الدخول</button>
+      </section>
+      <nav class="tabs" aria-label="أقسام التطبيق">
+        <button class="tab-btn active" data-tab="analysisTab" type="button">تحليل العينات</button>
+        <button class="tab-btn" data-tab="newTripTab" type="button">تسجيل بدل السفر</button>
+        <button class="tab-btn" data-tab="extraDayTab" type="button">تسجيل يوم عمل إضافي</button>
+        <button class="tab-btn" data-tab="recordsTab" type="button">السجلات</button>
+        <button class="tab-btn" data-tab="settlementTab" type="button">تسوية العهدة</button>
+        <button class="tab-btn admin-only hidden" data-tab="adminTab" type="button">إدارة النظام</button>
+      </nav>
+
+      <section id="analysisTab" class="tab-panel active">
+        <div class="panel lab-showcase-panel">
+          <h2 class="lab-showcase-title">تحليل عينة</h2>
+          <div class="lab-showcase-divider"></div>
+
+          <form id="labAnalysisForm" class="lab-meta-grid">
+            <label>اسم العميل
+              <input id="labClientName" type="text" placeholder="اسم العميل" autocomplete="off">
+            </label>
+            <label>الأحماض (%)
+              <input id="labAcids" type="number" inputmode="decimal" min="0" step="any" placeholder="0">
+            </label>
+          </form>
+
+          <!-- الصف الأول: مربعان وتحتهما مربعان للأوزان -->
+          <div class="lab-group-box">
+            <div class="lab-weights-grid">
+              <label class="lab-box-card">
+                <span>وزن البيكر فارغ</span>
+                <input id="labEmptyWeight" type="number" inputmode="decimal" min="0" step="any" placeholder="0">
+              </label>
+              <label class="lab-box-card">
+                <span>وزن البيكر مليان</span>
+                <input id="labBeforeBoil" type="number" inputmode="decimal" min="0" step="any" placeholder="0">
+              </label>
+              <label class="lab-box-card">
+                <span>وزن البيكر بعد الغليان</span>
+                <input id="labAfterBoil" type="number" inputmode="decimal" min="0" step="any" placeholder="0">
+              </label>
+              <label class="lab-box-card">
+                <span>وزن الرواسب في البيكر</span>
+                <input id="labSedimentWeight" type="number" inputmode="decimal" min="0" step="any" placeholder="0">
+              </label>
+            </div>
+          </div>
+
+          <div class="lab-calculate-wrap">
+            <button id="calculateLabBtn" type="button" class="lab-button lab-button-calculate">احسب التحليل</button>
+          </div>
+
+          <!-- الصف الثاني: 3 مربعات جنب بعض للنسب -->
+          <div class="lab-group-box">
+            <div class="analysis-results">
+              <div class="lab-metric-box">
+                <span>نسبة المياه</span>
+                <b id="resWaterPct">0.00%</b>
+              </div>
+              <div class="lab-metric-box">
+                <span>نسبة الرواسب</span>
+                <b id="resSedimentPct">0.00%</b>
+              </div>
+              <div class="lab-metric-box">
+                <span>نسبة الأحماض</span>
+                <b id="resAcidPct">0.00%</b>
+              </div>
+            </div>
+          </div>
+
+          <!-- الصف الثالث: الخصم بالطن في المنتصف -->
+          <div class="analysis-deduction-wrap">
+            <div class="analysis-deduction-box">
+              <span>الخصم بالطن (كجم/طن)</span>
+              <b id="resDeductionPerTon">0</b>
+            </div>
+          </div>
+
+          <div class="lab-card-footer">Programmed by .Ali Ragab - TAGADDOD</div>
+
+          <div class="actions-row lab-actions-center">
+            <button id="shareLabImageBtn" type="button" class="lab-button lab-button-share">مشاركة صورة التحليل</button>
+            <button id="clearLabFormBtn" type="button" class="lab-button lab-button-clear">تفريغ الحقول</button>
+          </div>
+          <p class="muted lab-note-center">السماح للأحماض 3%، والسماح للمياه والرواسب معًا 2%. كل زيادة 1% تُحسب 10 كجم لكل طن.</p>
+        </div>
+
+      </section>
+
+      <section id="newTripTab" class="tab-panel">
+        <div class="panel">
+          <h2>تسجيل بدل السفر</h2>
+          <form id="tripForm" class="form-grid">
+            <label>تاريخ الرحلة<input id="tripDate" type="date" required></label>
+            <label>المندوب<select id="tripRepSelect" required></select></label>
+            <label>المكان / المحافظة<input id="tripPlace" type="text" required placeholder="المكان أو المحافظة"></label>
+            <label>اسم العميل<input id="tripClient" type="text" required></label>
+            <label>بدل السفر (جنيه - ثابت)<input id="tripAllowance" type="number" min="0" step="0.01" readonly required title="يتم تحديد قيمة البدل من حساب المشرف فقط"></label>
+            <button type="submit" class="primary">حفظ بدل السفر</button>
+          </form>
+          <p class="muted">لو الإنترنت فاصل، تتحفظ الرحلة مؤقتًا على الجهاز وتُرسل تلقائيًا عند عودة الاتصال.</p>
+        </div>
+
+      </section>
+
+      <section id="extraDayTab" class="tab-panel">
+        <div class="panel">
+          <h2>تسجيل يوم عمل إضافي</h2>
+          <form id="extraDayForm" class="form-grid">
+            <label>تاريخ اليوم الإضافي<input id="extraDayDate" type="date" required></label>
+            <label>المندوب<select id="extraDayRepSelect" required></select></label>
+            <label>سبب التكليف / ملاحظات<input id="extraDayReason" type="text" required placeholder="مثال: اسم العميل او المكان الي انت رايحه"></label>
+            <label>صورة إثبات التكليف أو الفاتورة<input id="extraDayProofInput" type="file" accept="image/*"></label>
+            <button type="submit" class="primary">حفظ اليوم الإضافي</button>
+          </form>
+          <p class="muted">إرفاق صورة إثبات. لو الإنترنت فاصل، يتحفظ الطلب مؤقتًا على الجهاز ويرتفع عند عودة الاتصال.</p>
+        </div>
+
+      </section>
+
+      <section id="recordsTab" class="tab-panel">
+        <div class="panel monthly-summary-panel admin-only hidden">
+          <div class="panel-head">
+            <h2>ملخص بدل السفر الشهري</h2>
+            <label>الشهر
+              <input id="summaryMonthInput" type="month">
+            </label>
+          </div>
+          <p id="monthlySummaryCaption" class="summary-text"></p>
+          <div class="table-wrap monthly-summary-wrap">
+            <table class="monthly-summary-table">
+              <thead><tr><th>المندوب</th><th>عدد أيام الرحلات</th><th>إجمالي بدل السفر</th></tr></thead>
+              <tbody id="monthlySummaryBody"></tbody>
+              <tfoot id="monthlySummaryFoot"></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>سجل بدل السفر</h2>
+            <button id="syncNowBtn" class="secondary" type="button">تحديث من Google Sheets</button>
+          </div>
+          <div class="filters admin-only hidden">
+            <label>من تاريخ<input id="fromDate" type="date"></label>
+            <label>إلى تاريخ<input id="toDate" type="date"></label>
+            <label class="search-label">بحث<input id="tripSearchInput" type="search" placeholder="اسم المندوب أو العميل أو المكان"></label>
+            <button id="exportExcelBtn" class="secondary" type="button">تصدير Excel</button>
+          </div>
+          <p id="recordsSummary" class="summary-text">سجل الرحلات</p>
+          <div class="table-wrap trip-horizontal-wrap">
+            <table>
+              <thead><tr><th>الطابع الزمني</th><th>التاريخ</th><th>المندوب</th><th>المكان</th><th>العميل</th><th>بدل السفر</th><th>إجراء</th></tr></thead>
+              <tbody id="recordsBody"></tbody>
+            </table>
+          </div>
+          <div id="tripsPaginationBar" class="pagination">
+            <button id="prevTripsPageBtn" class="secondary" type="button">السابق</button>
+            <span id="tripsPageInfo">صفحة 1 من 1</span>
+            <button id="nextTripsPageBtn" class="secondary" type="button">التالي</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>سجل بدل يوم عمل إضافي</h2>
+            <button id="syncExtraNowBtn" class="secondary" type="button">تحديث من Google Sheets</button>
+          </div>
+          <div class="filters admin-only hidden">
+            <label>من تاريخ<input id="extraFromDate" type="date"></label>
+            <label>إلى تاريخ<input id="extraToDate" type="date"></label>
+            <label class="search-label">بحث<input id="extraSearchInput" type="search" placeholder="اسم المندوب أو سبب التكليف"></label>
+            <button id="exportExtraExcelBtn" class="secondary" type="button">تصدير Excel أيام إضافية</button>
+          </div>
+          <p id="extraRecordsSummary" class="summary-text">سجل أيام العمل الإضافية</p>
+          <div id="extraBulkReviewControls" class="bulk-review-actions admin-only hidden">
+            <strong id="extraPendingReviewCount"></strong>
+            <button id="approveAllExtraBtn" class="btn btn-success" type="button">قبول كل الأيام المعلّقة</button>
+            <button id="rejectAllExtraBtn" class="btn btn-danger" type="button">رفض كل الأيام المعلّقة</button>
+            <button id="retryFailedExtraBtn" class="btn btn-secondary hidden" type="button">إعادة إرسال القرارات المتعذرة</button>
+          </div>
+          <div class="table-wrap rep-landscape-wrap">
+            <table>
+              <thead><tr><th>الطابع الزمني</th><th>التاريخ</th><th>المندوب</th><th>السبب / الملاحظات</th><th>صورة الإثبات</th><th>الحالة</th><th>إجراء</th></tr></thead>
+              <tbody id="extraRecordsBody"></tbody>
+            </table>
+          </div>
+          <div id="extraPaginationBar" class="pagination">
+            <button id="prevExtraPageBtn" class="secondary" type="button">السابق</button>
+            <span id="extraPageInfo">صفحة 1 من 1</span>
+            <button id="nextExtraPageBtn" class="secondary" type="button">التالي</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="settlementTab" class="tab-panel">
+        <div class="panel">
+          <h2>تسوية العهدة</h2>
+          <p class="muted">تُحفظ التسوية على الجهاز عند انقطاع الإنترنت، ثم تُزامَن مع Google Sheets تلقائيًا عند عودة الاتصال.</p>
+          <form id="settlementForm" class="form-grid">
+            <label>التاريخ<input id="settlementDate" type="date" required></label>
+            <label id="settlementRepLabel">اسم المندوب<select id="settlementRepSelect" required></select></label>
+            <label>المبلغ المستلم من الشركة اليوم (جنيه)<input id="settlementReceivedToday" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+            <label>المبلغ المتبقي من رحلات سابقة (جنيه)<input id="settlementPriorBalance" type="number" min="0" step="0.01" value="0" inputmode="decimal"></label>
+            <div class="settlement-expenses-field">
+              <div class="panel-head">
+                <h3>المبالغ المصروفة</h3>
+                <button id="addSettlementExpenseBtn" class="secondary" type="button">إضافة بند</button>
+              </div>
+              <div id="settlementExpenses" class="settlement-expenses"></div>
+            </div>
+            <div class="settlement-totals" aria-live="polite">
+              <div><span>إجمالي المبلغ معك</span><strong id="settlementTotalCash">0.00 جنيه</strong></div>
+              <div><span>إجمالي المصروف اليوم</span><strong id="settlementSpent">0.00 جنيه</strong></div>
+              <div><span>المتبقي معك</span><strong id="settlementRemaining">0.00 جنيه</strong></div>
+            </div>
+            <div class="actions-row settlement-actions">
+              <button id="saveSettlementBtn" class="primary" type="submit">حفظ التسوية</button>
+              <button id="shareSettlementBtn" class="secondary" type="button">مشاركة صورة التسوية</button>
+            </div>
+          </form>
+        </div>
+        <div class="panel">
+          <h2>التسويات المسجلة</h2>
+          <p id="settlementsSummary" class="summary-text">آخر 10 تسويات محفوظة في Google Sheets.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>التاريخ</th><th>المندوب</th><th>إجمالي المبلغ</th><th>المصروف</th><th>المتبقي</th><th>الحالة</th></tr></thead>
+              <tbody id="settlementsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="adminTab" class="tab-panel">
+        <div class="panel">
+          <h2>بدل السفر الافتراضي</h2>
+          <div class="inline-form"><label>قيمة البدل (جنيه)<input id="defaultAllowanceInput" type="number" min="0" step="0.01"></label><button id="saveAllowanceBtn" class="primary" type="button">حفظ البدل</button></div>
+        </div>
+        <div class="panel">
+          <h2>إضافة مندوب أو مشرف</h2>
+          <form id="addRepForm" class="form-grid">
+            <label>الاسم<input id="newRepName" required></label>
+            <label>رقم التليفون<input id="newRepPhone" type="tel" inputmode="numeric" required></label>
+            <label>نوع الحساب<select id="newRepRole"><option value="rep">مندوب</option><option value="admin">مشرف</option></select></label>
+            <button class="primary" type="submit">إضافة الحساب</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h2>الحسابات المسجلة</h2>
+          <ul id="repsList" class="reps-list"></ul>
+        </div>
+        <div class="panel">
+          <h2>مزامنة البيانات</h2>
+          <p id="syncStatus" class="notice">Google Sheets هو مصدر البيانات الأساسي بين الأجهزة.</p>
+          <button id="syncNowAdminBtn" class="secondary" type="button" onclick="document.getElementById('syncNowBtn').click()">مزامنة الآن</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer>Designed &amp; Structured by ALI RAGAB - TAGADDOD</footer>
+  <script defer src="analysis.js?v=share-only-v11"></script>
+  <script defer src="app.js?v=settlement-v9"></script>
+  <script>
+    (function () {
+      const splash = document.getElementById("appSplash");
+      const skip = document.getElementById("skipSplashBtn");
+      let splashTimer = null;
+      function hideSplash() {
+        if (!splash) return;
+        clearTimeout(splashTimer);
+        splash.classList.add("hidden");
+        setTimeout(() => splash.remove(), 220);
+      }
+      skip?.addEventListener("click", hideSplash);
+      splashTimer = setTimeout(hideSplash, 1000);
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js")
+            .then((registration) => registration.update())
+            .catch(() => {});
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
